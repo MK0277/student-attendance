@@ -89,7 +89,20 @@ $("saveAttendanceBtn").addEventListener('click',async()=>{
   try{const result=await api('/api/attendance',{method:'POST',body:JSON.stringify({date:state.date,entries})});state.marks={};toast(result.message);await refresh();}
   catch(e){toast(e.message);}
 });
-document.querySelectorAll('[data-scroll]').forEach(b=>b.addEventListener('click',()=>{document.getElementById(b.dataset.scroll).scrollIntoView({behavior:'smooth'});document.querySelectorAll('.nav-item').forEach(x=>x.classList.toggle('active',x===b));}));
+const mobileMenuBtn=$("mobileMenuBtn");
+mobileMenuBtn.addEventListener('click',()=>{
+  const open=$("mobileMenuBtn").getAttribute('aria-expanded')!=='true';
+  $("mobileMenuBtn").setAttribute('aria-expanded',String(open));
+  $("mobileMenuBtn").setAttribute('aria-label',open?'Close navigation menu':'Open navigation menu');
+  document.querySelector('.sidebar').classList.toggle('mobile-open',open);
+});
+document.querySelectorAll('[data-scroll]').forEach(b=>b.addEventListener('click',()=>{
+  document.getElementById(b.dataset.scroll).scrollIntoView({behavior:'smooth'});
+  document.querySelectorAll('.nav-item').forEach(x=>x.classList.toggle('active',x===b));
+  $("mobileMenuBtn").setAttribute('aria-expanded','false');
+  $("mobileMenuBtn").setAttribute('aria-label','Open navigation menu');
+  document.querySelector('.sidebar').classList.remove('mobile-open');
+}));
 
 const tourSteps=[
  {title:'Welcome to Attendly!',text:'This is your simple student attendance workspace. We will show you the main areas in a few quick steps.'},
