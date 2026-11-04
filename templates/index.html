@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f6fa">
+  <title>Attendly · Student Attendance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body data-today="{{ today }}">
+<div class="app-shell">
+  <aside class="sidebar">
+    <a class="brand" href="/"><span class="brand-mark">A</span><span>Attendly<small>STUDENT MANAGER</small></span></a>
+    <div class="side-label">WORKSPACE</div>
+    <button class="nav-item active" data-scroll="overview"><span>▦</span> Overview</button>
+    <button class="nav-item" data-scroll="roster"><span>♙</span> Students</button>
+    <button class="nav-item" data-scroll="attendance"><span>✓</span> Attendance</button>
+    <div class="side-note"><div class="note-icon">✦</div><b>Small steps, great records.</b><p>Keep your class organised and attendance up to date.</p></div>
+    <div class="sidebar-bottom"><span class="avatar">MK</span><span><b>Class Admin</b><small>Workspace</small></span></div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar"><div><div class="eyebrow">YOUR CLASSROOM, IN CONTROL</div><h1>Student attendance</h1><p class="subheading">A simple place to manage your students and daily attendance.</p></div>
+      <button class="btn btn-soft" id="helpBtn" title="Replay the beginner guide">ⓘ <span>Quick guide</span></button>
+    </header>
+
+    <section id="overview" class="stats-grid">
+      <article class="stat-card"><div class="stat-top"><span>Total students</span><span class="stat-icon lilac">♙</span></div><strong id="totalCount">0</strong><small>Students in your class</small></article>
+      <article class="stat-card"><div class="stat-top"><span>Present today</span><span class="stat-icon green">✓</span></div><strong id="presentCount">0</strong><small id="presentHint">Marked present</small></article>
+      <article class="stat-card"><div class="stat-top"><span>Absent today</span><span class="stat-icon rose">–</span></div><strong id="absentCount">0</strong><small>Marked absent</small></article>
+      <article class="stat-card"><div class="stat-top"><span>Not marked</span><span class="stat-icon amber">◷</span></div><strong id="unmarkedCount">0</strong><small>Still waiting for a status</small></article>
+    </section>
+
+    <section class="panel roster-panel" id="roster">
+      <div class="panel-heading"><div><div class="eyebrow">YOUR CLASS LIST</div><h2>Students <span class="count-pill" id="rosterCount">0</span></h2><p>Keep student details in one easy-to-find list.</p></div>
+        <button class="btn btn-primary" id="addStudentBtn">＋ Add student</button></div>
+      <div class="toolbar"><label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Search name, roll number or class…"></label><span class="toolbar-hint">Tip: use the roll number to find someone quickly.</span></div>
+      <div class="table-wrap"><table><thead><tr><th>ROLL NO.</th><th>STUDENT</th><th>CLASS / SECTION</th><th>PHONE</th><th>TODAY</th><th class="right">ACTIONS</th></tr></thead><tbody id="studentRows"><tr><td colspan="6" class="empty">Loading students…</td></tr></tbody></table></div>
+      <div class="table-foot"><span id="tableSummary">No students added yet</span><a href="/export.csv?date={{ today }}" id="exportLink">↓ Download CSV</a></div>
+    </section>
+
+    <section class="panel attendance-panel" id="attendance">
+      <div class="panel-heading attendance-heading"><div><div class="eyebrow">DAILY CHECK-IN</div><h2>Take attendance</h2><p>Choose a date, mark each student, then save your work.</p></div>
+        <label class="date-field"><span>ATTENDANCE DATE</span><input type="date" id="attendanceDate" value="{{ today }}"></label></div>
+      <div class="attendance-tools"><div><b id="attendanceProgress">0 of 0 marked</b><small>Choose a status for each student.</small></div><div class="quick-actions"><button class="btn btn-small btn-soft" id="allPresentBtn">✓ All present</button><button class="btn btn-small btn-soft" id="clearMarksBtn">Clear marks</button></div></div>
+      <div id="attendanceList" class="attendance-list"><div class="empty">Add students first to start taking attendance.</div></div>
+      <div class="save-row"><span id="saveHint">Your changes are not saved until you press Save attendance.</span><button class="btn btn-primary" id="saveAttendanceBtn">Save attendance <span>→</span></button></div>
+    </section>
+    <footer class="footer">Made with care · <b>Created by MK Dzines</b></footer>
+  </main>
+</div>
+
+<div class="modal-backdrop" id="studentModal" aria-hidden="true"><div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-head"><div><div class="eyebrow">STUDENT DETAILS</div><h2 id="modalTitle">Add a student</h2><p>Just the basics. You can edit these details later.</p></div><button class="icon-btn" id="closeModal" aria-label="Close">×</button></div>
+  <form id="studentForm"><input type="hidden" id="studentId"><div class="form-grid">
+    <label class="form-field full">Student full name *<input id="studentName" required maxlength="100" placeholder="e.g. Aanya Sharma"></label>
+    <label class="form-field">Roll number *<input id="studentRoll" required maxlength="30" placeholder="e.g. BCA-001"></label>
+    <label class="form-field">Class / section<input id="studentClass" maxlength="60" placeholder="e.g. BCA Year 2"></label>
+    <label class="form-field">Phone number<input id="studentPhone" maxlength="25" placeholder="Optional"></label>
+    <label class="form-field">Email address<input id="studentEmail" type="email" maxlength="120" placeholder="Optional"></label>
+  </div><div class="modal-actions"><button type="button" class="btn btn-soft" id="cancelModal">Cancel</button><button class="btn btn-primary" type="submit" id="submitStudent">Save student</button></div></form>
+</div></div>
+<div class="toast" id="toast" role="status"></div>
+<div class="tour-backdrop" id="tourBackdrop" hidden><div class="tour-card"><div class="tour-step" id="tourStep">WELCOME · 1 OF 4</div><h3 id="tourTitle">Welcome to Attendly!</h3><p id="tourText">Let's take a quick look around. This short guide will show you how to use the app.</p><div class="tour-actions"><button class="text-btn" id="skipTour">Skip guide</button><button class="btn btn-primary" id="nextTour">Next <span>→</span></button></div></div></div>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body></html>
